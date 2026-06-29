@@ -364,12 +364,93 @@ onkeyup="searchTools()">
 
 <h1>🧭 Besteckrechnung</h1>
 
-<p>
-Berechnung folgt in Schritt 3
-</p>
+<br>
+
+<label>Breite A</label>
+
+<input id="latAGrad" placeholder="Grad">
+
+<br><br>
+
+<input id="latAMin" placeholder="Minuten">
+
+<br><br>
+
+<select id="latADir">
+<option>N</option>
+<option>S</option>
+</select>
+
+<br><br>
+
+<label>Länge A</label>
+
+<input id="lonAGrad" placeholder="Grad">
+
+<br><br>
+
+<input id="lonAMin" placeholder="Minuten">
+
+<br><br>
+
+<select id="lonADir">
+<option>E</option>
+<option>W</option>
+</select>
+
+<br><br>
+
+<label>Breite B</label>
+
+<input id="latBGrad" placeholder="Grad">
+
+<br><br>
+
+<input id="latBMin" placeholder="Minuten">
+
+<br><br>
+
+<select id="latBDir">
+<option>N</option>
+<option>S</option>
+</select>
+
+<br><br>
+
+<label>Länge B</label>
+
+<input id="lonBGrad" placeholder="Grad">
+
+<br><br>
+
+<input id="lonBMin" placeholder="Minuten">
+
+<br><br>
+
+<select id="lonBDir">
+<option>E</option>
+<option>W</option>
+</select>
+
+<br><br>
+
+<button class="back-btn" onclick="calcBesteck()">
+Berechnen
+</button>
+
+<div id="besteckResult"
+style="
+margin-top:30px;
+padding:20px;
+background:rgba(255,255,255,.05);
+border-radius:15px;
+">
+
+Ergebnis erscheint hier
 
 </div>
 
+</div>
 <!-- GROSSKREIS -->
 
 <div id="grosskreis" class="page">
@@ -722,69 +803,90 @@ document.getElementById(id).style.display="block";
 
 }
 
-function calcBesteck(){
+ffunction calcBesteck(){
 
-let latA =
-parseFloat(document.getElementById("latA").value);
+function pos(grad,min,richtung){
 
-let lonA =
-parseFloat(document.getElementById("lonA").value);
+let wert =
+parseFloat(grad)
++
+(parseFloat(min)/60);
 
-let latB =
-parseFloat(document.getElementById("latB").value);
+if(richtung==="S" || richtung==="W"){
 
-let lonB =
-parseFloat(document.getElementById("lonB").value);
-
-if(
-isNaN(latA) ||
-isNaN(lonA) ||
-isNaN(latB) ||
-isNaN(lonB)
-){
-
-document.getElementById("besteckResult").innerHTML =
-"Bitte alle Felder ausfüllen.";
-
-return;
+wert *= -1;
 
 }
 
+return wert;
+
+}
+
+let latA =
+pos(
+document.getElementById("latAGrad").value,
+document.getElementById("latAMin").value,
+document.getElementById("latADir").value
+);
+
+let lonA =
+pos(
+document.getElementById("lonAGrad").value,
+document.getElementById("lonAMin").value,
+document.getElementById("lonADir").value
+);
+
+let latB =
+pos(
+document.getElementById("latBGrad").value,
+document.getElementById("latBMin").value,
+document.getElementById("latBDir").value
+);
+
+let lonB =
+pos(
+document.getElementById("lonBGrad").value,
+document.getElementById("lonBMin").value,
+document.getElementById("lonBDir").value
+);
+
 let deltaPhi =
-(latB - latA) * 60;
+(latB-latA)*60;
 
 let deltaLambda =
-(lonB - lonA) * 60;
+(lonB-lonA)*60;
 
 let mittelbreite =
-(latA + latB) / 2;
+(latA+latB)/2;
 
 let departure =
 deltaLambda *
 Math.cos(
-mittelbreite * Math.PI / 180
+mittelbreite*Math.PI/180
 );
 
 let distanz =
 Math.sqrt(
-Math.pow(deltaPhi,2)
+deltaPhi*deltaPhi
 +
-Math.pow(departure,2)
+departure*departure
 );
 
 let rwK =
+(
 Math.atan2(
 departure,
 deltaPhi
-) *
-180 /
-Math.PI;
-
-if(rwK < 0){
-
-rwK += 360;
-
-}
+)
+*
+180
+/
+Math.PI
++
+360
+)
+%
+360;
 
 document.getElementById(
 "besteckResult"
@@ -806,14 +908,6 @@ deltaLambda.toFixed(2)
 
 +
 
-"<b>Mittelbreite:</b> "
-+
-mittelbreite.toFixed(4)
-+
-"°<br><br>"
-
-+
-
 "<b>Distanz:</b> "
 +
 distanz.toFixed(2)
@@ -822,7 +916,7 @@ distanz.toFixed(2)
 
 +
 
-"<b>Rechtweisender Kurs:</b> "
+"<b>rwK:</b> "
 +
 rwK.toFixed(1)
 +
