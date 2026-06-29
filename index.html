@@ -362,11 +362,42 @@ Berechnung folgt später
 ← Zurück
 </button>
 
-<h1>⏱️ Koppelnavigation</h1>
+<h1>⏱️ Koppelnavigation & ETA</h1>
 
-<p>
-Berechnung folgt später
-</p>
+<br>
+
+<label>Distanz (sm)</label>
+<input id="distanz" type="number">
+
+<br><br>
+
+<label>Geschwindigkeit (kn)</label>
+<input id="speed" type="number">
+
+<br><br>
+
+<label>Startzeit</label>
+<input id="starttime" type="time">
+
+<br><br>
+
+<button class="back-btn" onclick="calcKoppeln()">
+Berechnen
+</button>
+
+<div
+id="koppelnResult"
+style="
+margin-top:30px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+line-height:2;
+">
+
+Ergebnis erscheint hier
+
+</div>
 
 </div>
 
@@ -575,6 +606,97 @@ rwK.toFixed(1)
 "°";
 
 }
+
+function calcKoppeln(){
+
+let d =
+parseFloat(
+document.getElementById("distanz").value
+);
+
+let v =
+parseFloat(
+document.getElementById("speed").value
+);
+
+let start =
+document.getElementById("starttime").value;
+
+if(
+isNaN(d) ||
+isNaN(v) ||
+!start
+){
+
+document.getElementById("koppelnResult").innerHTML =
+"Bitte alle Felder ausfüllen.";
+
+return;
+
+}
+
+let fahrzeit = d / v;
+
+let stunden =
+Math.floor(fahrzeit);
+
+let minuten =
+Math.round(
+(fahrzeit - stunden) * 60
+);
+
+let teile =
+start.split(":");
+
+let startH =
+parseInt(teile[0]);
+
+let startM =
+parseInt(teile[1]);
+
+let gesamt =
+(startH * 60)
++
+startM
++
+(stunden * 60)
++
+(minuten);
+
+let etaH =
+Math.floor(gesamt / 60) % 24;
+
+let etaM =
+gesamt % 60;
+
+document.getElementById(
+"koppelnResult"
+).innerHTML =
+
+"<b>Fahrzeit:</b> "
++
+stunden
++
+" h "
++
+minuten
++
+" min<br><br>"
+
++
+
+"<b>ETA:</b> "
++
+String(etaH).padStart(2,"0")
++
+":"
++
+String(etaM).padStart(2,"0")
++
+" Uhr";
+
+}
+
  
 function goHome(){
 
