@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NAUTICO</title>
+
+<style>
+
+:root{
+--navy:#172A39;
+--cream:#E9E4E0;
+--orange:#FC563C;
+--gray:#6E7575;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+background:var(--navy);
+color:var(--cream);
+overflow-x:hidden;
+}
+
+.background{
+position:fixed;
+inset:0;
+z-index:-1;
+overflow:hidden;
+}
+
+.blob{
+position:absolute;
+border-radius:50%;
+filter:blur(120px);
+opacity:.15;
+animation:float 18s infinite ease-in-out;
+}
+
+.blob1{
+background:var(--orange);
+width:400px;
+height:400px;
+top:-150px;
+right:-120px;
+}
+
+.blob2{
+background:var(--cream);
+width:300px;
+height:300px;
+bottom:-100px;
+left:-100px;
+animation-delay:5s;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-40px);}
+}
+
+header{
+padding:40px;
+text-align:center;
+border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.logo{
+font-size:56px;
+font-weight:bold;
+}
+
+.subtitle{
+margin-top:10px;
+color:#cfcfcf;
+}
+
+.menu{
+padding:40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+max-width:1400px;
+margin:auto;
+}
+
+.card{
+background:rgba(13,20,27,.8);
+backdrop-filter:blur(15px);
+border-radius:24px;
+padding:35px;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+border:1px solid rgba(255,255,255,.15);
+}
+
+.card:hover{
+transform:translateY(-6px);
+border-color:var(--orange);
+}
+
+.card span{
+font-size:55px;
+display:block;
+margin-bottom:15px;
+}
+
+.card h2{
+margin-bottom:10px;
+}
+
+.section{
+display:none;
+max-width:900px;
+margin:40px auto;
+padding:20px;
+}
+
+.active{
+display:block;
+}
+
+.calculator{
+background:rgba(13,20,27,.85);
+padding:30px;
+border-radius:24px;
+border:1px solid rgba(255,255,255,.15);
+}
+
+.calculator h2{
+margin-bottom:25px;
+text-align:center;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:5px;
+}
+
+input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+.result{
+margin-top:20px;
+padding:15px;
+background:rgba(255,255,255,.05);
+border-radius:12px;
+}
+
+button{
+background:var(--orange);
+color:white;
+border:none;
+padding:15px 25px;
+border-radius:12px;
+cursor:pointer;
+margin-top:20px;
+}
+
+button:hover{
+opacity:.9;
+}
+
+.back{
+background:transparent;
+border:1px solid white;
+margin-bottom:20px;
+}
+
+footer{
+margin-top:50px;
+text-align:center;
+padding:40px;
+border-top:1px solid rgba(255,255,255,.15);
+}
+
+.footer-link{
+color:var(--cream);
+text-decoration:none;
+}
+
+.footer-link:hover{
+color:var(--orange);
+}
+
+</style>
+</head>
+<body>
+
+<div class="background">
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+</div>
+
+<header>
+
+<div class="logo">
+⚓ NAUTICO
+</div>
+
+<div class="subtitle">
+Nautische Berechnungstools
+</div>
+
+</header>
+
+<div id="home">
+
+<div class="menu">
+
+<div class="card" onclick="showPage('besteck')">
+<span>🧭</span>
+<h2>Besteckrechnung</h2>
+<p>Mittelbreite & vergrößerte Breite</p>
+</div>
+
+<div class="card" onclick="showPage('grosskreis')">
+<span>🌍</span>
+<h2>Großkreis</h2>
+<p>Großkreisnavigation</p>
+</div>
+
+<div class="card" onclick="showPage('strom')">
+<span>🌊</span>
+<h2>Stromdreieck</h2>
+<p>Strom & Fahrt</p>
+</div>
+
+<div class="card" onclick="showPage('koppeln')">
+<span>⏱️</span>
+<h2>Koppeln</h2>
+<p>Weg · Fahrt · Zeit</p>
+</div>
+
+<div class="card" onclick="showPage('utc')">
+<span>🌐</span>
+<h2>UTC Zeiten</h2>
+<p>Zeitrechnung</p>
+</div>
+
+<div class="card" onclick="showPage('feuer')">
+<span>🔥</span>
+<h2>Feuer in der Kimm</h2>
+<p>Sichtweite eines Feuers</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- Koppeln -->
+
+<div id="koppeln" class="section">
+
+<button class="back" onclick="home()">
+← Zurück
+</button>
+
+<div class="calculator">
+
+<h2>Koppelnavigation</h2>
+
+<label>Distanz (sm)</label>
+<input id="distanz">
+
+<label>Geschwindigkeit (kn)</label>
+<input id="speed">
+
+<button onclick="calcKoppeln()">
+Berechnen
+</button>
+
+<div id="koppelnResult" class="result">
+Ergebnis erscheint hier
+</div>
+
+</div>
+
+</div>
+
+<!-- Feuer -->
+
+<div id="feuer" class="section">
+
+<button class="back" onclick="home()">
+← Zurück
+</button>
+
+<div class="calculator">
+
+<h2>Feuer in der Kimm</h2>
+
+<label>Feuerhöhe (m)</label>
+<input id="fh">
+
+<label>Augeshöhe (m)</label>
+<input id="ah">
+
+<button onclick="calcFeuer()">
+Berechnen
+</button>
+
+<div id="feuerResult" class="result">
+Ergebnis erscheint hier
+</div>
+
+</div>
+
+</div>
+
+<!-- UTC -->
+
+<div id="utc" class="section">
+
+<button class="back" onclick="home()">
+← Zurück
+</button>
+
+<div class="calculator">
+
+<h2>UTC Rechner</h2>
+
+<label>Zeitzonenabweichung (z.B. +1)</label>
+<input id="zz">
+
+<button onclick="calcUTC()">
+Berechnen
+</button>
+
+<div id="utcResult" class="result">
+Ergebnis erscheint hier
+</div>
+
+</div>
+
+</div>
+
+<!-- Platzhalter -->
+
+<div id="besteck" class="section">
+<button class="back" onclick="home()">← Zurück</button>
+<div class="calculator">
+<h2>Besteckrechnung</h2>
+<p>Kommt als nächstes aus der Excel-Datei.</p>
+</div>
+</div>
+
+<div id="grosskreis" class="section">
+<button class="back" onclick="home()">← Zurück</button>
+<div class="calculator">
+<h2>Großkreisnavigation</h2>
+<p>Kommt als nächstes aus der Excel-Datei.</p>
+</div>
+</div>
+
+<div id="strom" class="section">
+<button class="back" onclick="home()">← Zurück</button>
+<div class="calculator">
+<h2>Stromdreiecke</h2>
+<p>Kommt als nächstes aus der Excel-Datei.</p>
+</div>
+</div>
+
+<footer>
+
+Made with ❤️ by
+
+<a
+class="footer-link"
+href="https://www.instagram.com/thesimonfischer"
+target="_blank">
+Simon Fischer
+</a>
+
+</footer>
+
+<script>
+
+function showPage(id){
+
+document.getElementById("home").style.display="none";
+
+document
+.querySelectorAll(".section")
+.forEach(section=>{
+section.classList.remove("active");
+});
+
+document
+.getElementById(id)
+.classList.add("active");
+
+}
+
+function home(){
+
+document.getElementById("home").style.display="block";
+
+document
+.querySelectorAll(".section")
+.forEach(section=>{
+section.classList.remove("active");
+});
+
+}
+
+function calcKoppeln(){
+
+let d =
+parseFloat(document.getElementById("distanz").value);
+
+let v =
+parseFloat(document.getElementById("speed").value);
+
+let h = d/v;
+
+document.getElementById("koppelnResult").innerHTML =
+"Fahrzeit: " + h.toFixed(2) + " Stunden";
+
+}
+
+function calcFeuer(){
+
+let fh =
+parseFloat(document.getElementById("fh").value);
+
+let ah =
+parseFloat(document.getElementById("ah").value);
+
+let sm =
+2.08*(Math.sqrt(fh)+Math.sqrt(ah));
+
+document.getElementById("feuerResult").innerHTML =
+"Sichtweite: " + sm.toFixed(2) + " sm";
+
+}
+
+function calcUTC(){
+
+let zz =
+parseFloat(document.getElementById("zz").value);
+
+let now=new Date();
+
+now.setHours(now.getHours()-zz);
+
+document.getElementById("utcResult").innerHTML =
+"UTC: " + now.toUTCString();
+
+}
+
+</script>
+
+</body>
+</html>
