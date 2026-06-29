@@ -427,12 +427,38 @@ Berechnung folgt später
 
 <h1>🔥 Feuer in der Kimm</h1>
 
-<p>
-Berechnung folgt später
-</p>
+<br>
+
+<label>Feuerhöhe (m)</label>
+<input id="fh" type="number">
+
+<br><br>
+
+<label>Augeshöhe (m)</label>
+<input id="ah" type="number">
+
+<br><br>
+
+<button class="back-btn" onclick="calcFeuer()">
+Berechnen
+</button>
+
+<div
+id="feuerResult"
+style="
+margin-top:30px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+line-height:2;
+">
+
+Ergebnis erscheint hier
 
 </div>
 
+</div>
+ 
 <!-- GEZEITEN -->
 
 <div id="gezeiten" class="page">
@@ -696,6 +722,63 @@ String(etaM).padStart(2,"0")
 " Uhr";
 
 }
+
+
+function calcFeuer(){
+
+let fh =
+parseFloat(
+document.getElementById("fh").value
+);
+
+let ah =
+parseFloat(
+document.getElementById("ah").value
+);
+
+if(
+isNaN(fh) ||
+isNaN(ah)
+){
+
+document.getElementById("feuerResult").innerHTML =
+"Bitte alle Werte eintragen.";
+
+return;
+
+}
+
+let sm =
+2.08 *
+(
+Math.sqrt(fh)
++
+Math.sqrt(ah)
+);
+
+let km =
+sm * 1.852;
+
+document.getElementById(
+"feuerResult"
+).innerHTML =
+
+"<b>Sichtweite:</b> "
++
+sm.toFixed(2)
++
+" sm<br><br>"
+
++
+
+"<b>Sichtweite:</b> "
++
+km.toFixed(2)
++
+" km";
+
+}
+
 
  
 function goHome(){
