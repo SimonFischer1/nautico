@@ -332,12 +332,47 @@ Berechnung folgt in Schritt 3
 
 <h1>🌍 Großkreisnavigation</h1>
 
-<p>
-Berechnung folgt später
-</p>
+<br>
+
+<label>Breite Position A (°)</label>
+<input id="gcLatA" type="number">
+
+<br><br>
+
+<label>Länge Position A (°)</label>
+<input id="gcLonA" type="number">
+
+<br><br>
+
+<label>Breite Position B (°)</label>
+<input id="gcLatB" type="number">
+
+<br><br>
+
+<label>Länge Position B (°)</label>
+<input id="gcLonB" type="number">
+
+<br><br>
+
+<button class="back-btn" onclick="calcGrosskreis()">
+Berechnen
+</button>
+
+<div
+id="grosskreisResult"
+style="
+margin-top:30px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+line-height:2;
+">
+
+Ergebnis erscheint hier
 
 </div>
 
+</div>
 <!-- STROM -->
 
 <div id="strom" class="page">
@@ -346,11 +381,47 @@ Berechnung folgt später
 ← Zurück
 </button>
 
-<h1>🌊 Stromdreiecke</h1>
+<h1>🌊 Stromdreieck</h1>
 
-<p>
-Berechnung folgt später
-</p>
+<br>
+
+<label>Kurs durchs Wasser (KDW °)</label>
+<input id="kdw" type="number">
+
+<br><br>
+
+<label>Fahrt durchs Wasser (FDW kn)</label>
+<input id="fdw" type="number">
+
+<br><br>
+
+<label>Stromkurs (StK °)</label>
+<input id="stk" type="number">
+
+<br><br>
+
+<label>Stromgeschwindigkeit (StG kn)</label>
+<input id="stg" type="number">
+
+<br><br>
+
+<button class="back-btn" onclick="calcStrom()">
+Berechnen
+</button>
+
+<div
+id="stromResult"
+style="
+margin-top:30px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+line-height:2;
+">
+
+Ergebnis erscheint hier
+
+</div>
 
 </div>
 
@@ -852,6 +923,216 @@ utcDate.toISOString();
 }
 
 
+ function calcGrosskreis(){
+
+let lat1 =
+parseFloat(
+document.getElementById("gcLatA").value
+);
+
+let lon1 =
+parseFloat(
+document.getElementById("gcLonA").value
+);
+
+let lat2 =
+parseFloat(
+document.getElementById("gcLatB").value
+);
+
+let lon2 =
+parseFloat(
+document.getElementById("gcLonB").value
+);
+
+if(
+isNaN(lat1) ||
+isNaN(lon1) ||
+isNaN(lat2) ||
+isNaN(lon2)
+){
+
+document.getElementById(
+"grosskreisResult"
+).innerHTML =
+"Bitte alle Felder ausfüllen.";
+
+return;
+
+}
+
+const R = 3440.065;
+
+let φ1 = lat1 * Math.PI/180;
+let φ2 = lat2 * Math.PI/180;
+
+let Δφ =
+(lat2-lat1) *
+Math.PI/180;
+
+let Δλ =
+(lon2-lon1) *
+Math.PI/180;
+
+let a =
+Math.sin(Δφ/2)**2
++
+Math.cos(φ1)
+*
+Math.cos(φ2)
+*
+Math.sin(Δλ/2)**2;
+
+let c =
+2 *
+Math.atan2(
+Math.sqrt(a),
+Math.sqrt(1-a)
+);
+
+let distanz =
+R * c;
+
+let y =
+Math.sin(Δλ)
+*
+Math.cos(φ2);
+
+let x =
+Math.cos(φ1)
+*
+Math.sin(φ2)
+-
+Math.sin(φ1)
+*
+Math.cos(φ2)
+*
+Math.cos(Δλ);
+
+let anfangskurs =
+(
+Math.atan2(y,x)
+*
+180
+/
+Math.PI
++
+360
+)
+%
+360;
+
+document.getElementById(
+"grosskreisResult"
+).innerHTML =
+
+"<b>Großkreisdistanz:</b> "
++
+distanz.toFixed(1)
++
+" sm<br><br>"
+
++
+
+"<b>Anfangskurs:</b> "
++
+anfangskurs.toFixed(1)
++
+"°";
+
+}
+
+function calcStrom(){
+
+let kdw =
+parseFloat(
+document.getElementById("kdw").value
+);
+
+let fdw =
+parseFloat(
+document.getElementById("fdw").value
+);
+
+let stk =
+parseFloat(
+document.getElementById("stk").value
+);
+
+let stg =
+parseFloat(
+document.getElementById("stg").value
+);
+
+if(
+isNaN(kdw) ||
+isNaN(fdw) ||
+isNaN(stk) ||
+isNaN(stg)
+){
+
+document.getElementById("stromResult").innerHTML =
+"Bitte alle Werte ausfüllen.";
+
+return;
+
+}
+
+let kdwRad =
+kdw*Math.PI/180;
+
+let stkRad =
+stk*Math.PI/180;
+
+let vx =
+fdw*Math.sin(kdwRad)
++
+stg*Math.sin(stkRad);
+
+let vy =
+fdw*Math.cos(kdwRad)
++
+stg*Math.cos(stkRad);
+
+let fueg =
+Math.sqrt(
+vx*vx
++
+vy*vy
+);
+
+let kueg =
+(
+Math.atan2(vx,vy)
+*
+180
+/
+Math.PI
++
+360
+)
+%
+360;
+
+document.getElementById(
+"stromResult"
+).innerHTML =
+
+"<b>Kurs über Grund (KÜG):</b> "
++
+kueg.toFixed(1)
++
+"°<br><br>"
+
++
+
+"<b>Fahrt über Grund (FÜG):</b> "
++
+fueg.toFixed(2)
++
+" kn";
+
+}
 
  
  
