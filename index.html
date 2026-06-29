@@ -139,6 +139,29 @@ margin-bottom:10px;
 color:#cfcfcf;
 }
 
+input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+font-size:16px;
+background:white;
+color:#172A39;
+}
+
+label{
+display:block;
+font-weight:600;
+margin-bottom:8px;
+}
+
+.result-box{
+margin-top:20px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+}
+ 
 footer{
 margin-top:40px;
 padding:40px;
@@ -223,12 +246,55 @@ Nautische Berechnungstools
 
 <div class="menu">
 
-<div class="card" onclick="showPage('besteck')">
-<div class="icon">🧭</div>
-<h2>Besteckrechnung</h2>
-<p>Mittelbreite & Vergrößerte Breite</p>
+<div id="besteck" class="page">
+
+<button class="back-btn" onclick="goHome()">
+← Zurück
+</button>
+
+<h1>🧭 Besteckrechnung (Mittelbreite)</h1>
+
+<br>
+
+<label>Breite Position A (°)</label>
+<input id="latA" type="number" step="0.0001">
+
+<br><br>
+
+<label>Länge Position A (°)</label>
+<input id="lonA" type="number" step="0.0001">
+
+<br><br>
+
+<label>Breite Position B (°)</label>
+<input id="latB" type="number" step="0.0001">
+
+<br><br>
+
+<label>Länge Position B (°)</label>
+<input id="lonB" type="number" step="0.0001">
+
+<br><br>
+
+<button class="back-btn" onclick="calcBesteck()">
+Berechnen
+</button>
+
+<div
+id="besteckResult"
+style="
+margin-top:30px;
+padding:20px;
+border-radius:15px;
+background:rgba(255,255,255,.05);
+line-height:2;
+">
+
+Ergebnis erscheint hier
+
 </div>
 
+</div>
 
 <div class="card" onclick="showPage('grosskreis')">
 <div class="icon">🌍</div>
@@ -436,6 +502,114 @@ document.getElementById(id).style.display="block";
 
 }
 
+function calcBesteck(){
+
+let latA =
+parseFloat(document.getElementById("latA").value);
+
+let lonA =
+parseFloat(document.getElementById("lonA").value);
+
+let latB =
+parseFloat(document.getElementById("latB").value);
+
+let lonB =
+parseFloat(document.getElementById("lonB").value);
+
+if(
+isNaN(latA) ||
+isNaN(lonA) ||
+isNaN(latB) ||
+isNaN(lonB)
+){
+
+document.getElementById("besteckResult").innerHTML =
+"Bitte alle Felder ausfüllen.";
+
+return;
+
+}
+
+let deltaPhi =
+(latB - latA) * 60;
+
+let deltaLambda =
+(lonB - lonA) * 60;
+
+let mittelbreite =
+(latA + latB) / 2;
+
+let departure =
+deltaLambda *
+Math.cos(
+mittelbreite * Math.PI / 180
+);
+
+let distanz =
+Math.sqrt(
+Math.pow(deltaPhi,2)
++
+Math.pow(departure,2)
+);
+
+let rwK =
+Math.atan2(
+departure,
+deltaPhi
+) *
+180 /
+Math.PI;
+
+if(rwK < 0){
+
+rwK += 360;
+
+}
+
+document.getElementById(
+"besteckResult"
+).innerHTML =
+
+"<b>Δφ:</b> "
++
+deltaPhi.toFixed(2)
++
+"'<br><br>"
+
++
+
+"<b>Δλ:</b> "
++
+deltaLambda.toFixed(2)
++
+"'<br><br>"
+
++
+
+"<b>Mittelbreite:</b> "
++
+mittelbreite.toFixed(4)
++
+"°<br><br>"
+
++
+
+"<b>Distanz:</b> "
++
+distanz.toFixed(2)
++
+" sm<br><br>"
+
++
+
+"<b>Rechtweisender Kurs:</b> "
++
+rwK.toFixed(1)
++
+"°";
+
+}
+ 
 function goHome(){
 
 document.querySelector(".menu").style.display="grid";
